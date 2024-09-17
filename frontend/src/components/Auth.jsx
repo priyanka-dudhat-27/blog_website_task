@@ -4,13 +4,14 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-
 import axios from 'axios';
 import { authActions } from '../store'; // Adjust the import path as needed
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
 
 const Auth = () => {
   const navigate = useNavigate();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const [isSignUp, setIsSignUp] = useState(false);
   const [inputs, setInputs] = useState({
     name: '',
@@ -22,27 +23,34 @@ const Auth = () => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
-  const endpoint=isSignUp ? "register" : "login";
-  const sendRequest=async()=>{
-    const res=await axios.post(`http://localhost:8001/api/v1/auth/${endpoint}`,{
-      name:inputs.name,
-      email:inputs.email,
-      password:inputs.password
-    }).catch((err)=>console.log(err))
+  const endpoint = isSignUp ? "register" : "login";
 
-    const data=await res.data;
-    return data;
-  }
+  const sendRequest = async () => {
+    try {
+      const res = await axios.post(`http://localhost:8001/api/v1/auth/${endpoint}`, {
+        name: inputs.name,
+        email: inputs.email,
+        password: inputs.password
+      });
+      return res.data;
+    } catch (err) {
+      toast.error(err.message);
+      throw err; // Re-throw the error to be caught in handleSubmit
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(inputs);
-    sendRequest().then((data)=>{
-      console.log(data)
-      localStorage.setItem('userId',data.data._id)
-      localStorage.setItem('token',data.token)
-      dispatch(authActions.Login())
-      navigate("/")
-    })
+    try {
+      const data = await sendRequest();
+      localStorage.setItem('userId', data.data._id);
+      localStorage.setItem('token', data.token);
+      dispatch(authActions.Login());
+      toast.success('Successfully logged in!');
+      navigate("/");
+    } catch (err) {
+      // Error handling is already done in sendRequest
+    }
   };
 
   return (
@@ -57,6 +65,7 @@ const Auth = () => {
           <Button onClick={() => setIsSignUp(!isSignUp)} sx={{ borderRadius: 3, marginTop: 3 }}>Change to {isSignUp ? 'Login' : 'Sign Up'}</Button>
         </Box>
       </form>
+      <ToastContainer /> {/* Toast Container for notifications */}
     </div>
   );
 };
