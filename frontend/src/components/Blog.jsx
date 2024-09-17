@@ -6,33 +6,44 @@ import { Card, CardHeader, CardMedia, Avatar, CardContent, Typography, IconButto
 import { ModeEditOutlined as ModeEditOutlinedIcon, DeleteForever as DeleteForeverIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { format } from 'date-fns'; // Import date-fns for date formatting
 
-const Blog = ({ title, description, image, user, isUser,id }) => {
-  const navigate=useNavigate()
-  const handleEdit=()=>{
-    navigate(`/blogs/${id}`)
-  }
+const Blog = ({ title, description, image, user, isUser, id, createdAt }) => {
+  const navigate = useNavigate();
 
-  const deleteRequest=async()=>{
-    const res=await axios.delete(`http://localhost:8001/api/v1/blog/delete/${id}`,{
-      headers:{
-        Authorization:`Bearer ${localStorage.getItem('token')}`
-      }
-    }).catch((err)=>console.log(err))
-    const data=await res.data;
-    return data
-  }
-  const handleDelete=()=>{
-    deleteRequest().then((data)=>console.log(data))
-  }
+  const handleEdit = () => {
+    navigate(`/blogs/${id}`);
+  };
+
+  const deleteRequest = async () => {
+    try {
+      const res = await axios.delete(`http://localhost:8001/api/v1/blog/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      const data = await res.data;
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDelete = () => {
+    deleteRequest().then((data) => console.log(data));
+  };
+
+  // Format the created date
+  const formattedDate = format(new Date(createdAt), 'MMMM dd, yyyy');
+
   return (
-    <Card 
-      sx={{ 
-        width: '40%', 
-        margin: 'auto', 
-        mt: 3, 
-        boxShadow: '5px 5px 10px #ccc', 
-        '&:hover': { boxShadow: "10px 10px 20px #ccc" } 
+    <Card
+      sx={{
+        width: '40%',
+        margin: 'auto',
+        mt: 3,
+        boxShadow: '5px 5px 10px #ccc',
+        '&:hover': { boxShadow: "10px 10px 20px #ccc" },
       }}
     >
       <CardHeader
@@ -54,7 +65,7 @@ const Blog = ({ title, description, image, user, isUser,id }) => {
           )
         }
         title={title}
-        subheader="September 14, 2016" // You might want to replace this with a dynamic date
+        subheader={formattedDate} // Display the formatted date
       />
       <CardMedia
         component="img"
