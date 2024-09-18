@@ -8,6 +8,8 @@ import UserBlogs from './components/UserBlogs'
 import BlogDetails from './components/BlogDetails'
 import AddBlogs from './components/AddBlogs'
 import { useSelector } from 'react-redux'
+import dotenv from "dotenv"
+dotenv.config();
 
 const App = () => {
   const isLoggedIn =useSelector(state=>state.isLoggedIn)

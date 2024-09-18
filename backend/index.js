@@ -7,7 +7,14 @@ const mongoose=require("./config/db")
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use(cors())
+app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+      allowedHeaders: ["Content-Type", "Authorization"],
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    })
+  );
 
 app.use("/api/v1",require("./routes/index"))
 app.listen(port,async(error)=>{

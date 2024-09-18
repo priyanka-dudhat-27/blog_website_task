@@ -10,6 +10,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
 
 const Auth = () => {
+  const BASE_URL = import.meta.env.BASE_URL
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isSignUp, setIsSignUp] = useState(false);
@@ -27,7 +29,7 @@ const Auth = () => {
 
   const sendRequest = async () => {
     try {
-      const res = await axios.post(`http://localhost:8001/api/v1/auth/${endpoint}`, {
+      const res = await axios.post(`${BASE_URL}/api/v1/auth/${endpoint}`, {
         name: inputs.name,
         email: inputs.email,
         password: inputs.password

@@ -5,12 +5,15 @@ import React, { useState } from 'react';
 import { Box, InputLabel, TextField, Typography, Button, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
 
+
+
 const AddBlogs = () => {
+  const BASE_URL = import.meta.env.BASE_URL
   const token = localStorage.getItem('token');
   const [inputs, setInputs] = useState({
     title: "",
     description: "",
-    image: null, 
+    image: null,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -21,30 +24,30 @@ const AddBlogs = () => {
   };
 
   const handleImageChange = (e) => {
-    setInputs({ ...inputs, image: e.target.files[0] }); 
+    setInputs({ ...inputs, image: e.target.files[0] });
   };
 
   const uploadImageToCloudinary = async () => {
     const formData = new FormData();
     formData.append('file', inputs.image);
-    formData.append('upload_preset', 'instaclone'); 
+    formData.append('upload_preset', 'instaclone');
     formData.append("folder", "posts");
 
 
     try {
       const res = await axios.post('https://api.cloudinary.com/v1_1/cantacloudy2/image/upload', formData);
-      return res.data.url; 
+      return res.data.url;
     } catch (error) {
       console.error("Image upload failed: ", error);
       throw new Error("Image upload failed.");
-      
+
     }
   };
 
   const sendRequest = async (imageUrl) => {
     try {
       const res = await axios.post(
-        'http://localhost:8001/api/v1/blog/add',
+        `${BASE_URL}/api/v1/blog/add`,
         {
           title: inputs.title,
           description: inputs.description,
@@ -74,11 +77,11 @@ const AddBlogs = () => {
     try {
       // First, upload the image to Cloudinary
       const imageUrl = await uploadImageToCloudinary();
-      
+
       // Then, send the blog post data along with the uploaded image URL
       const data = await sendRequest(imageUrl);
       setSuccess("Blog posted successfully!");
-      
+
       // Reset form
       setInputs({
         title: "",
@@ -95,34 +98,34 @@ const AddBlogs = () => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Box 
-          border={3} 
-          borderColor="linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(88,9,121,0.8436624649859944) 35%, rgba(0,212,255,1) 100%)" 
-          borderRadius={10} 
-          boxShadow={'10px 10px 20px #ccc'} 
-          padding={3} 
-          margin={'auto'} 
-          display={'flex'} 
-          width={'80%'} 
-          flexDirection={'column'} 
+        <Box
+          border={3}
+          borderColor="linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(88,9,121,0.8436624649859944) 35%, rgba(0,212,255,1) 100%)"
+          borderRadius={10}
+          boxShadow={'10px 10px 20px #ccc'}
+          padding={3}
+          margin={'auto'}
+          display={'flex'}
+          width={'80%'}
+          flexDirection={'column'}
           mt={3}
         >
           <Typography variant='h4' textAlign={'center'} color={'grey'} fontWeight={'bold'}>Post Your Blog</Typography>
-          
+
           {/* Title Input */}
-          <InputLabel sx={{ mb:1, mt:2, fontSize:'24px' }}>Title</InputLabel>
+          <InputLabel sx={{ mb: 1, mt: 2, fontSize: '24px' }}>Title</InputLabel>
           <TextField name="title" onChange={handleChange} value={inputs.title} />
 
           {/* Description Input */}
-          <InputLabel sx={{ mb:1, mt:2, fontSize:'24px' }}>Description</InputLabel>
+          <InputLabel sx={{ mb: 1, mt: 2, fontSize: '24px' }}>Description</InputLabel>
           <TextField name="description" onChange={handleChange} value={inputs.description} />
 
           {/* Image Input */}
-          <InputLabel sx={{ mb:1, mt:2, fontSize:'24px' }}>Image</InputLabel>
+          <InputLabel sx={{ mb: 1, mt: 2, fontSize: '24px' }}>Image</InputLabel>
           <TextField type="file" name="image" onChange={handleImageChange} />
 
           {/* Submit Button */}
-          <Button type="submit" sx={{mt:2,borderRadius:4}} variant='contained' color='warning' disabled={loading}>
+          <Button type="submit" sx={{ mt: 2, borderRadius: 4 }} variant='contained' color='warning' disabled={loading}>
             {loading ? <CircularProgress size={24} /> : "Submit"}
           </Button>
 
