@@ -10,7 +10,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for toast notifications
 
 const Auth = () => {
-  const BASE_URL = import.meta.env.BASE_URL
+  const BASE_URL = import.meta.env.VITE_BASE_URL
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
