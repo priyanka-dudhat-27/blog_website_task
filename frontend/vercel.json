@@ -1,9 +1,0 @@
-{
-    "REWRITES":
-    [
-        {
-            "SOURCE": "/blog/(.*)",
-            "DEST": "/"
-        }
-    ]
-}
